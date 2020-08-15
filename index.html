@@ -1,0 +1,112 @@
+<!--Test program for internship at NotchUp-->
+<!--Created by asxyzp (Aashish Loknath Panigrahi)-->
+<!DOCTYPE html>
+<html>
+  <head>
+	<title>NotchUp - Book a trial class</title>
+    
+	<!--Meta tags for declaring metadata for the website-->
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+	<meta name="description" content="Book a trial class at NotchUp">
+  	<meta name="keywords" content="Coding, Kids, Trial class">
+  	<meta name="author" content="Aashish Loknath Panigrahi">
+    
+	<!--Link tags for importing/linking external CSS documents-->
+	<!--NotchUp logo from notchup.co website for the icon on this website-->
+	<link rel="icon" href="https://static.wixstatic.com/media/9d7c0d_3c31692802d54810979831f6b8596fcb~mv2.png"/>
+	<!--Getting the font awesome icons-->
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+	<link href="style.css" rel="stylesheet" type="text/css"/>
+	
+	<!--Script tags for using external script tags, including jQuery code-->
+	<script async src="https://code.jquery.com/jquery-3.5.1.js"></script>
+	<script async src="script.js"></script>
+  </head>
+  <body>
+    <div class="container book-trial-class-div">
+		<div class="row book-trial-class-info">
+			<div class="col-md-12">
+				<h1>NotchUp</h1>
+				<p>
+					⏲️ Book your free trial class under a minute.
+				</p>
+			</div>
+		</div>
+		<div class="row book-trial-class-form">
+			<form class="col-md-12">
+				
+				<input type="text" id="parent-name" class="form-control form-input" placeholder="Parent's name" required/>
+				
+				<div class="book-trial-class-phone">
+					
+					<input type="text" id="country-code" class="form-control country-code" placeholder="e.g.+91" required/>&nbsp;
+					
+					<input type="text" id="parent-phone" class="form-control parent-phone" placeholder="Parent's phone number" required/>
+				</div>
+				
+				<input type="email" id="parent-email" class="form-control form-input" placeholder="Parent's e-mail ID (e.g. abc@gmail.com)" required/>
+				
+				<input type="text" id="child-name" class="form-control form-input" placeholder="Child's name" required/>
+				
+				<input type="text" id="child-age" class="form-control form-input" placeholder="Child's age" required/>
+				
+				<strong>Select a course for the trial class :</strong><br>
+				
+				<label for="scratch">
+					<input id="scratch" class="scratch" value="scratch" name="course" type="radio" checked/>
+					&nbsp;Scratch Junior
+				</label>&nbsp;
+				
+				<label for="game">
+					<input id="game" class="game" value="game" name="course" type="radio"/>&nbsp;Game development
+				</label>&nbsp;
+				
+				<label for="app">
+					<input id="app" class="app" value="app" name="course" type="radio"/>&nbsp;App development
+				</label>&nbsp;
+				
+				<label for="web">
+					<input id="web" class="web" value="web" name="course" type="radio"/>&nbsp;Wev development
+				</label>&nbsp;
+				
+				<label for="python">
+					<input id="python" class="python" value="python" name="course" type="radio"/>&nbsp;Python
+				</label>&nbsp;
+				
+				<label for="ai">
+					<input id="ai" class="ai" value="ai" name="course" type="radio"/>&nbsp;Artificial intelligence
+				</label><br>
+
+				<strong>Select a suitable date for the trial class :</strong>
+				<label for="suitable-date">
+					<input type='date' id="suitable-date" class="suitable-date form-control form-input" required/>
+				</label><br>
+				
+				<strong class="timeslot-txt">Select a suitable time slot for the trial class :</strong>
+				<div class="no-timeslot-msg"><em>Whoops! No time slots available.</em></div>
+				<div class="dropdown"></div>
+				<button type="submit" class="btn btn-dark submit">Book your trial</button>
+			</form>
+		</div>
+	</div>
+	<div id="error-box">
+		<strong>ERROR :</strong>
+		<div id="error-age">
+			<strong>🔞 Whoops! The child age input box contains non-numeric characters (e.g. -, A).</strong>
+		</div>
+		<div id="error-parent-name">
+			<strong>👫 Whoops! The parent name input box contains non-alphabetic characters (e.g. -, A).</strong>
+		</div>
+		<div id="error-child-name">
+			<strong>🧒 Whoops! The child name input box contains non-alphabetic characters (e.g. -, A).</strong>
+		</div>
+		<div id="error-cc">
+			<strong>☎️ Whoops! The country code input box contains non-numeric characters (e.g. -, A).</strong>
+		</div>
+		<div id="error-phone">
+			<strong>☎️ Whoops! The phone number input box contains non-numeric characters (e.g. -, A).</strong>
+		</div>
+	</div>
+  </body>
+</html>

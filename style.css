@@ -1,0 +1,74 @@
+.book-trial-class-div{
+	/*Coloring*/
+	background:	rgb(245,245,245);
+
+	/*Text styling*/
+	text-align:	center;
+	
+	/*Border styling*/
+	border-radius:10px;
+
+	/*Positional*/
+	margin-top:5%;
+	width:95%;
+}
+
+/*Styling all input elements*/
+.form-input{
+	/*Positional styling*/
+	width:80%;
+	margin:10px 0px 10px 0px;	/*Setting style for only top & bottom margin*/
+	margin-left:10%;			/*Setting style for left margin*/
+}
+
+/*Styling the div tag containing input for phone numbers*/
+.book-trial-class-phone{
+	/*Display type*/
+	display: flex;
+	flex-direction: row;
+	wrap: nowrap;
+
+	/*Position styling*/
+	width: 80%;
+	margin:10px 0px 10px 0px;	/*Setting style for only top & bottom margin*/
+	margin-left: 10%;
+}
+.country-code{
+	width:15%;
+}
+
+[for="suitable-date"]{
+	width:100%;
+}
+[for="suitable-time"]{
+	width:100%;
+}
+
+/*Styling error box components*/
+/*Will be displayed when there's an error*/
+#error-box{
+	text-align: center;
+	margin-top:10px;
+	display: none;
+}
+/*Will be displayed when age input is incorrect*/
+#error-age{
+	display: none;
+}
+
+.timeslot-txt{
+	display: none;
+}
+.no-timeslot-msg{
+	display: none;
+}
+
+.dropdown{
+	margin-left:10%;
+	width:80%;
+}
+
+.submit{
+	width:80%;
+	margin-bottom:10px;
+}
