@@ -1,6 +1,8 @@
 .book-trial-class-div{
 	/*Coloring*/
 	background:	rgb(245,245,245);
+	border: 5px solid #000;
+	box-shadow: 3px 3px #000;
 
 	/*Text styling*/
 	text-align:	center;
@@ -26,7 +28,7 @@
 	/*Display type*/
 	display: flex;
 	flex-direction: row;
-	wrap: nowrap;
+	flex-wrap:nowrap;
 
 	/*Position styling*/
 	width: 80%;
@@ -71,4 +73,15 @@
 .submit{
 	width:80%;
 	margin-bottom:10px;
+}
+
+@media(max-width:996px){
+	.book-trial-class-phone{
+		flex-wrap: wrap;
+		margin-top:0px;
+	}
+	.country-code{
+		width: 100%;
+		margin-bottom: -15px;
+	}
 }

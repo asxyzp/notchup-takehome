@@ -209,12 +209,11 @@ fetch("https://script.google.com/macros/s/AKfycbzJ8Nn2ytbGO8QOkGU1kfU9q50RjDHje4
 	cHour = hour+"";		//Getting hours in string
 	cMin = min+"";			//Getting minutes in string
 
-
-	//When course is changed then it will be stored in courseSelected
-	$(`input[name='course']`).on("change", function(){
-		courseSelected = $(`input[name='course']:checked`).val();
+	$('input[name="course"]').on("change",function(){
+		courseSelected = $('input[name="course"]:checked').val();
 	});
 
+	//When course is changed then it will be stored in courseSelected
 	//when date is changed then it will be stored in dateSelected
 	$('.suitable-date').on("change",function(){
 
@@ -247,6 +246,7 @@ fetch("https://script.google.com/macros/s/AKfycbzJ8Nn2ytbGO8QOkGU1kfU9q50RjDHje4
 				}
 		}
 
+		
 		dateSelected = $('.suitable-date').val();
 
 		//Checking if courseSelected is empty or not
