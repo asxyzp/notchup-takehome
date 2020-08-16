@@ -1,0 +1,16 @@
+$(document).ready(function(){
+	$(".text").height($("btn").height());
+	$(".write").css("display","none");
+	$(".btn").click(function(){
+		if($(".text").val()){
+			$("h2").css("display","block");
+			$(".write").css("display","flex");
+			$(".write").append(`<span>${$(".text").val()}</span>&nbsp;`);
+		}
+	});
+	$(".remove").click(function(){
+		$("h2").css("display","none");
+		$(".write").empty();
+		$(".write").css("display","none");
+	});
+});

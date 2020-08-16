@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Testing append() & empty()</title>
+		<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+		<style>
+			h1, h2{
+				text-align: center;
+				font-weight: 900;
+				font-family: monospace;
+			}
+			h2{
+				display: none;
+			}
+			.text-button{
+				display: flex;
+				flex-direction: row;
+				wrap: nowrap;
+				margin-left: 5%;
+				margin-top:20px;
+			}
+			.text{
+				padding: 2px;
+				width:85%;
+			}
+			.btn{
+				width:10%;
+			}
+			.remove{
+				margin-top: 10px;
+				width:91%!important;
+				margin-left:5%;
+				margin-bottom: 10px;
+			}
+			.write{
+				display: none;
+				border: 5px solid #000;
+				border-radius: 10px;
+				box-shadow: 3px 3px #000;
+				padding: 15px;
+				width:91%;
+				margin-left:5%;
+				flex-direction: row;
+				flex-wrap: wrap;	
+			}
+		</style>
+		<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+		<script src="test.js"></script>
+
+	</head>
+	<h1>Testing append() & empty()</h1>
+	<div class="text-button">
+		<input class="text" id="text" type="text" class="form-control" placeholder="Enter some text"/>&nbsp;
+		<button class="btn btn-dark">Enter </button>
+	</div>
+	<button class="btn btn-primary remove">Remove all wrapped elements</button>
+	<h2>Output :</h2>
+	<div class="write"></div>
+</html>

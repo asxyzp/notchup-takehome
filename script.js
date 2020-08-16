@@ -90,11 +90,15 @@ let getMaxDate = () =>{
 	return maxyear+'-'+maxmonth+'-'+maxday;			//In the YYYY-MM-DD format
 }
 
-
+//For number validation
+//For character validation
 let numbers = [0,1,2,3,4,5,6,7,8,9];
 let characters = [];
-for(let i=65;i<=65+26;i++){
+for(let i=65;i<=65+26;i++){						//Adding A-Z to characters
 	characters.push(String.fromCharCode(i));
+}
+for(let i=65;i<=65+26;i++){						//Adding a-z to characters
+	characters.push(String.fromCharCode(i).toLowerCase());
 }
 
 
@@ -111,7 +115,8 @@ fetch("https://script.google.com/macros/s/AKfycbzJ8Nn2ytbGO8QOkGU1kfU9q50RjDHje4
 .then(response=>response.json())
 .then(data=>{
 
-	let availableCourseID = [];		//Will store the ID of all available courses which are fetch from the data source
+	//Will store the ID of all available courses which are fetch from the data source
+	let availableCourseID = [];		
 
 	//Converts allCourseID values to number
 	for(let i=0;i<allCourseID.length;i++)
@@ -164,6 +169,17 @@ fetch("https://script.google.com/macros/s/AKfycbzJ8Nn2ytbGO8QOkGU1kfU9q50RjDHje4
 	}
 
 	let courseTimeSlots = {};	//An object which will store course_id with all available slots in the unixtime
+	/*
+		courseTimeSlots stores data in the form 
+		courseTimeSlots = {
+			course_id_1 : [{unix_timestamp, instructor_id}, {unix_timestamp, instructor_id}, ... ],
+			course_id_2 : [{unix_timestamp, instructor_id}, {unix_timestamp, instructor_id}, ... ],
+			course_id_3 : [{unix_timestamp, instructor_id}, {unix_timestamp, instructor_id}, ... ],
+			course_id_4 : [{unix_timestamp, instructor_id}, {unix_timestamp, instructor_id}, ... ],
+			course_id_5 : [{unix_timestamp, instructor_id}, {unix_timestamp, instructor_id}, ... ],
+			course_id_6 : [{unix_timestamp, instructor_id}, {unix_timestamp, instructor_id}, ... ]
+		}
+	*/
 	for(let i=0;i<availableCourseID.length;i++){
 		courseTimeSlots[availableCourseID[i]]=data[i]["slots"];
 	}
@@ -177,13 +193,13 @@ fetch("https://script.google.com/macros/s/AKfycbzJ8Nn2ytbGO8QOkGU1kfU9q50RjDHje4
 			let fullDate = new Date(unix_timestamp);	//From unixtime to date
 			let date =  fullDate.getDate();				//Getting date (1-31)
 			if(date<10)
-				date="0"+date;
+				date="0"+date;							//If date < 10 (e.g. 7), then date="0"+date (e.g. "07")
 			date+="";
 			let month = fullDate.getMonth()+"";			//Getting month (1-12)
 			if(month<10)
-				month="0"+month;
+				month="0"+month;						//If month < 10 (e.g. 7), then month="0"+month (e.g. "07")
 			month+="";
-			let year = 	fullDate.getFullYear()+"";		//Getting year
+			let year = 	fullDate.getFullYear()+"";		//Getting year (e.g. 2020)
 			let hours = fullDate.getHours()+"";			//Getting hours (0-23)
 			let minutes = fullDate.getMinutes()+"";		//Getting minutes (1-60)
 			allSlots[i][j] = [year+"-"+month+"-"+date, hours,minutes];	//Storing time slot in the format [YYYY-MM-DD, HH:MM]
@@ -209,13 +225,51 @@ fetch("https://script.google.com/macros/s/AKfycbzJ8Nn2ytbGO8QOkGU1kfU9q50RjDHje4
 	cHour = hour+"";		//Getting hours in string
 	cMin = min+"";			//Getting minutes in string
 
-	$('input[name="course"]').on("change",function(){
-		courseSelected = $('input[name="course"]:checked').val();
-	});
+	/*
+		Function : generateOnDaySlots
+		Functionality : Generates time slots when selected date for trial slot is the same day
+		Parameter : num - slot ID
+		Return value : availableTimeSlots filled w/ appropriate & available time slots
+	*/
+	let generateOnDaySlots = (num) =>{
+		availableTimeSlots=[];
+		//Appropriate time slots will be pushed into the array, which are >4 HRS from now
+		for(let i=0;i<courseTimeSlots[num].length;i++){
+			if(courseTimeSlots[num][i][0]==dateSelected){
+				if(Number(courseTimeSlots[num][i][1])>Number(cHour)+4){
+					availableTimeSlots.push(courseTimeSlots[num][i][1]+":"+courseTimeSlots[num][i][2]);
+				}
+			}
+		}
+		return availableTimeSlots;
+	}
+
+	/*
+		Function : generateOffDaySlots
+		Functionality : Generates time slots when selected date for trial slot is not the same day
+		Parameter : num - slot ID
+		Return value : availableTimeSlots filled w/ appropriate & available time slots
+	*/
+	let generateOffDaySlots = (num) =>{
+		availableTimeSlots = [];
+		for(let i=0;i<courseTimeSlots[1].length;i++){
+			if(courseTimeSlots[1][i][0]==dateSelected){
+				availableTimeSlots.push(courseTimeSlots[1][i][1]+":"+courseTimeSlots[1][i][2]);
+			}
+		}	
+		return availableTimeSlots;
+	}
 
 	//When course is changed then it will be stored in courseSelected
 	//when date is changed then it will be stored in dateSelected
-	$('.suitable-date').on("change",function(){
+	$('input[name="course"], .suitable-date').on("change",function(){
+
+		//EMptying all values of 
+		$(".dropdown").empty();
+
+		//Getting value of course & date which is selected from menu
+		courseSelected = $('input[name="course"]:checked').val();
+		dateSelected = $('.suitable-date').val();
 
 		/*
 			Function : showOrNot(length)
@@ -228,7 +282,6 @@ fetch("https://script.google.com/macros/s/AKfycbzJ8Nn2ytbGO8QOkGU1kfU9q50RjDHje4
 				if(availableTimeSlots.length==0){
 					$(".timeslot-txt").css("display","block");
 					$(".no-timeslot-msg").css("display","block");
-					$(".tslot_label").css("display","none");		//Hiding the time-slot input values
 				}
 
 				//When the number of available slots >0
@@ -237,123 +290,68 @@ fetch("https://script.google.com/macros/s/AKfycbzJ8Nn2ytbGO8QOkGU1kfU9q50RjDHje4
 					$(".timeslot-txt").css("display","block");
 					for(let i=0;i<availableTimeSlots.length;i++){
 						if (i==0){
-							$(".dropdown").after(`<label class="tslot_label" for="${availableTimeSlots[i]}"><input type="radio" id="${availableTimeSlots[i]}" value="${availableTimeSlots[i]}" name="tslot" class="tslot" checked/>&nbsp;${availableTimeSlots[i]}&nbsp;</label>`);
+							$(".dropdown").append(`<label class="tslot_label" for="${availableTimeSlots[i]}"><input type="radio" id="${availableTimeSlots[i]}" value="${availableTimeSlots[i]}" name="tslot" class="tslot" checked/>&nbsp;${availableTimeSlots[i]}&nbsp;</label>`);
 						}
 						else{
-							$(".dropdown").after(`<label class="tslot_label" for="${availableTimeSlots[i]}"><input type="radio" id="${availableTimeSlots[i]}" value="${availableTimeSlots[i]}" name="tslot" class="tslot"/>&nbsp;${availableTimeSlots[i]}&nbsp;</label>`);
+							$(".dropdown").append(`<label class="tslot_label" for="${availableTimeSlots[i]}"><input type="radio" id="${availableTimeSlots[i]}" value="${availableTimeSlots[i]}" name="tslot" class="tslot"/>&nbsp;${availableTimeSlots[i]}&nbsp;</label>`);
 						}
 					}
 				}
 		}
 
 		
-		dateSelected = $('.suitable-date').val();
+		
 
 		//Checking if courseSelected is empty or not
 		if($(`input[name='course']:checked`).val()!=''){
 			//When selected course is scratch
 			if($(`input[name='course']:checked`).val()=='scratch'){
 				console.log("SCRATCH AT "+dateSelected);
-				if(dateSelected==cYMD){				//If the selected date is the current date
-					availableTimeSlots = [];		//Will store the avilable time slot
-
-					//Appropriate time slots will be pushed into the array
-					for(let i=0;i<courseTimeSlots[1].length;i++){
-						if(courseTimeSlots[1][i][0]==dateSelected){
-							if(Number(courseTimeSlots[1][i][1])>Number(cHour)+4){
-								availableTimeSlots.push(courseTimeSlots[1][i][1]+":"+courseTimeSlots[1][i][2]);
-							}
-						}
-					}
-
+				if(dateSelected==cYMD){							//If the selected date is the current date
+					availableTimeSlots = generateOnDaySlots(1); //Will store the avilable time slots for the same day
 					showOrNot(availableTimeSlots.length);
 				}
 				else{
-					availableTimeSlots = [];
-
-					for(let i=0;i<courseTimeSlots[1].length;i++){
-						if(courseTimeSlots[1][i][0]==dateSelected){
-							availableTimeSlots.push(courseTimeSlots[1][i][1]+":"+courseTimeSlots[1][i][2]);
-						}
-					}
-					
+					availableTimeSlots = generateOffDaySlots(1);
 					showOrNot(availableTimeSlots.length);
 				}
 			}
 
 			//When select course is game Development
 			if($(`input[name='course']:checked`).val()=='game'){
-				if(dateSelected==cYMD){				//If the selected date is the current date
-					availableTimeSlots = [];		//Will store the avilable time slot
-					
-					for(let i=0;i<courseTimeSlots[2].length;i++){
-						if(courseTimeSlots[2][i][0]==dateSelected){
-							if(Number(courseTimeSlots[2][i][1])>Number(cHour)+4){
-								availableTimeSlots.push(courseTimeSlots[2][i][1]+":"+courseTimeSlots[2][i][2]);
-							}
-						}
-					}
-					
+				console.log("GAME AT "+dateSelected);
+				if(dateSelected==cYMD){								//If the selected date is the current date
+					availableTimeSlots = generateOnDaySlots(2);		//Will store the avilable time slot
 					showOrNot(availableTimeSlots.length);
 				}
 				else{
-					availableTimeSlots = [];
-					
-					for(let i=0;i<courseTimeSlots[2].length;i++){
-						if(courseTimeSlots[2][i][0]==dateSelected){
-							availableTimeSlots.push(courseTimeSlots[2][i][1]+":"+courseTimeSlots[2][i][2]);
-						}
-					}
-					
+					availableTimeSlots = generateOffDaySlots(2);	
 					showOrNot(availableTimeSlots.length);
 				}
 			}
 
 			//When selected course is web Development
 			if($(`input[name='course']:checked`).val()=='app'){
+				console.log("APP AT "+dateSelected);
 				if(dateSelected==cYMD){				//If the selected date is the current date
-					availableTimeSlots = [];		//Will store the avilable time slot
-					for(let i=0;i<courseTimeSlots[3].length;i++){
-						if(courseTimeSlots[3][i][0]==dateSelected){
-							if(Number(courseTimeSlots[3][i][1])>Number(cHour)+4){
-								availableTimeSlots.push(courseTimeSlots[3][i][1]+":"+courseTimeSlots[3][i][2]);
-							}
-						}
-					}
+					availableTimeSlots = generateOnDaySlots(3);		//Will store the avilable time slot
 					showOrNot(availableTimeSlots.length);
 				}
 				else{
-					availableTimeSlots = [];
-					for(let i=0;i<courseTimeSlots[3].length;i++){
-						if(courseTimeSlots[3][i][0]==dateSelected){
-							availableTimeSlots.push(courseTimeSlots[3][i][1]+":"+courseTimeSlots[3][i][2]);
-						}
-					}
+					availableTimeSlots = generateOnDaySlots(3);
 					showOrNot(availableTimeSlots.length);
 				}
 			}
 
 			//When selected course is app development
 			if($(`input[name='course']:checked`).val()=='web'){
-				console.log("APP AT "+dateSelected);
-				if(dateSelected==cYMD){				//If the selected date is the current date
-					availableTimeSlots = [];		//Will store the avilable time slot
-					for(let i=0;i<courseTimeSlots[4].length;i++){
-						if(courseTimeSlots[4][i][0]==dateSelected){
-							if(Number(courseTimeSlots[4][i][1])>Number(cHour)+4){
-								availableTimeSlots.push(courseTimeSlots[4][i][1]+":"+courseTimeSlots[4][i][2]);
-							}
-						}
-					}
+				console.log("WEB AT "+dateSelected);
+				if(dateSelected==cYMD){								//If the selected date is the current date
+					availableTimeSlots = generateOnDaySlots(4);		//Will store the avilable time slot
 					showOrNot(availableTimeSlots.length);
 				}
 				else{
-					availableTimeSlots = [];
-					for(let i=0;i<courseTimeSlots[4].length;i++){
-						if(courseTimeSlots[4][i][0]==dateSelected){
-							availableTimeSlots.push(courseTimeSlots[4][i][1]+":"+courseTimeSlots[4][i][2]);
-						}
-					}
+					availableTimeSlots = generateOffDaySlots(4);
 					showOrNot(availableTimeSlots.length);
 				}
 			}
@@ -362,23 +360,11 @@ fetch("https://script.google.com/macros/s/AKfycbzJ8Nn2ytbGO8QOkGU1kfU9q50RjDHje4
 			if($(`input[name='course']:checked`).val()=='python'){
 				console.log("PYTHON AT "+dateSelected);
 				if(dateSelected==cYMD){				//If the selected date is the current date
-					availableTimeSlots = [];		//Will store the avilable time slot
-					for(let i=0;i<courseTimeSlots[5].length;i++){
-						if(courseTimeSlots[5][i][0]==dateSelected){
-							if(Number(courseTimeSlots[5][i][1])>Number(cHour)+4){
-								availableTimeSlots.push(courseTimeSlots[5][i][1]+":"+courseTimeSlots[5][i][2]);
-							}
-						}
-					}
+					availableTimeSlots = generateOnDaySlots(5);		//Will store the avilable time slot
 					showOrNot(availableTimeSlots.length);
 				}
 				else{
-					availableTimeSlots = [];
-					for(let i=0;i<courseTimeSlots[5].length;i++){
-						if(courseTimeSlots[5][i][0]==dateSelected){
-							availableTimeSlots.push(courseTimeSlots[5][i][1]+":"+courseTimeSlots[5][i][2]);
-						}
-					}
+					availableTimeSlots = generateOffDaySlots(5);
 					showOrNot(availableTimeSlots.length);
 				}
 			}
@@ -387,23 +373,11 @@ fetch("https://script.google.com/macros/s/AKfycbzJ8Nn2ytbGO8QOkGU1kfU9q50RjDHje4
 			if($(`input[name='course']:checked`).val()=='ai'){
 				console.log("AI AT "+dateSelected);
 				if(dateSelected==cYMD){				//If the selected date is the current date
-					availableTimeSlots = [];		//Will store the avilable time slot
-					for(let i=0;i<courseTimeSlots[6].length;i++){
-						if(courseTimeSlots[6][i][0]==dateSelected){
-							if(Number(courseTimeSlots[6][i][1])>Number(cHour)+4){
-								availableTimeSlots.push(courseTimeSlots[6][i][1]+":"+courseTimeSlots[6][i][2]);
-							}
-						}
-					}
+					availableTimeSlots = generateOnDaySlots(6);		//Will store the avilable time slot
 					showOrNot(availableTimeSlots.length);
 				}
 				else{
-					availableTimeSlots = [];
-					for(let i=0;i<courseTimeSlots[6].length;i++){
-						if(courseTimeSlots[6][i][0]==dateSelected){
-							availableTimeSlots.push(courseTimeSlots[6][i][1]+":"+courseTimeSlots[6][i][2]);
-						}
-					}
+					availableTimeSlots = generateOffDaySlots(6);
 					showOrNot(availableTimeSlots.length);
 				}
 			}			
